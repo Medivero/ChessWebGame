@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+body{
+    @apply bg-[url('src/assets/background/gradient_abstraktsiia_piatna_203727_3840x2400.jpg')] text-black
+}
