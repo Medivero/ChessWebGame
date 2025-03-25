@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Figures from "./Figures";
+import getFigureImage from "../utilites/getFigureImage";
 
 function GenerateBoard() {
   let tempedpole = [];
@@ -20,37 +21,59 @@ function GenerateBoard() {
     tempedpole[i].figure = "BlackPawn";
     tempedpole[i].color = "Black";
   }
+  tempedpole[56].figure = "BlackRook"
+  tempedpole[56].color = "Black"
   return tempedpole;
 }
 
 function moveFigure(
-  figure: string,
+  figure: {figure:string;color:string;index:number},
   position: number,
   color: string,
   setPole: Function,
   pole: [item: { figure: string; index: number; color: string }],
   stateOfFigure: number,
-  setStateOfFigure: Function
+  setStateOfFigure: Function,
+  setColorOfFigure:Function
 ) {
   let tempedpole = [...pole];
+  console.log(position)
   if (stateOfFigure === 0 && tempedpole[position].figure !== "empty") {
     setStateOfFigure(position);
+    setColorOfFigure(figure.color)
   } else if (stateOfFigure !== 0 && tempedpole[position].figure === "empty") {
-    if (position === (stateOfFigure-8 || stateOfFigure-16) || position === (stateOfFigure+8 || stateOfFigure+16)){
-    let CurrentColor = tempedpole[stateOfFigure].color;
-    let CurrentFigure = tempedpole[stateOfFigure].figure;
-    tempedpole[stateOfFigure].figure = "empty";
-    tempedpole[position].figure = CurrentFigure;
-    tempedpole[position].color = CurrentColor;
-      setStateOfFigure(0);
-      setPole(tempedpole);
+    if (color === "Black"){
+      if (position === stateOfFigure-8 ||  position === stateOfFigure-16){
+        let CurrentColor = tempedpole[stateOfFigure].color;
+        let CurrentFigure = tempedpole[stateOfFigure].figure;
+        tempedpole[stateOfFigure].figure = "empty";
+        tempedpole[position].figure = CurrentFigure;
+        tempedpole[position].color = CurrentColor;
+        setStateOfFigure(0);
+        setPole(tempedpole);
+        setColorOfFigure(0)
+      }
+    }
+    if (color === "White"){
+      if (position === stateOfFigure+8 || position === stateOfFigure+16){
+        let CurrentColor = tempedpole[stateOfFigure].color;
+        let CurrentFigure = tempedpole[stateOfFigure].figure;
+        tempedpole[stateOfFigure].figure = "empty";
+        tempedpole[position].figure = CurrentFigure;
+        tempedpole[position].color = CurrentColor;
+        setStateOfFigure(0);
+        setPole(tempedpole);
+        setColorOfFigure(0)
+      }
     }
   }
 }
+
+
 function Board() {
   const [pole, setPole] = useState([{}]);
   const [stateOfFigure, setStateOfFigure] = useState(0);
-
+  const [colorOfFigure,setColorOfFigure] = useState('empty')
   useEffect(() => {
     setPole(GenerateBoard());
   }, []);
@@ -61,13 +84,14 @@ function Board() {
           <div
             onClick={() =>
               moveFigure(
-                item.figure,
+                item,
                 index,
-                "",
+                colorOfFigure,
                 setPole,
                 pole,
                 stateOfFigure,
-                setStateOfFigure
+                setStateOfFigure,
+                setColorOfFigure
               )
             }
             key={index}
@@ -75,7 +99,7 @@ function Board() {
               item.index === 0 ? "bg-white" : "bg-gray-500 text-white"
             } hover:bg-gray-400 transition flex justify-center items-center ${stateOfFigure !== 0 && stateOfFigure === index? 'border border-solid border-red-700 border-[3px]': ''}`}
           >
-            {item.figure === "empty" ? "" : <img src={`src/assets/figures/${item.figure}.png`}></img>}
+            {item.figure === "empty" ? "" : <img src={`${getFigureImage(item.figure)}`}></img>}
           </div>
         ))}
       </div>
